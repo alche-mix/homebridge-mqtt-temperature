@@ -52,13 +52,13 @@ function MqttTemperatureAccessory(log, config) {
 	this.topicStatusGet	= config["topics"].statusGet;
 	this.topicStatusSet	= config["topics"].statusSet;
 
-	this.switchStatus = false;
+	this.currentTemperature = -50.0; // default
 	
 	this.service = new Service.TemperatureSensor(this.name);
   	this.service
     	.getCharacteristic(Characteristic.CurrentTemperature)
     	.on('get', this.getStatus.bind(this))
-    	.on('set', this.setStatus.bind(this));
+    	//.on('set', this.setStatus.bind(this));
 	
 	// connect to MQTT broker
 	this.client = mqtt.connect(this.url, this.options);
@@ -70,8 +70,8 @@ function MqttTemperatureAccessory(log, config) {
 	this.client.on('message', function (topic, message) {
 		if (topic == that.topicStatusGet) {
 			var status = message.toString();
-			that.switchStatus = (status == "true" ? true : false);
-		   	that.service.getCharacteristic(Characteristic.On).setValue(that.switchStatus, undefined, 'fromSetValue');
+			that.switchStatus = status;
+		   	that.service.getCharacteristic(Characteristic.CurrentTemperature).setValue(that.switchStatus, undefined, 'fromSetValue');
 		}
 	});
     this.client.subscribe(this.topicStatusGet);
@@ -87,7 +87,7 @@ module.exports = function(homebridge) {
 MqttTemperatureAccessory.prototype.getStatus = function(callback) {
     callback(null, this.switchStatus);
 }
-
+/*
 MqttTemperatureAccessory.prototype.setStatus = function(status, callback, context) {
 	if(context !== 'fromSetValue') {
 		this.switchStatus = status;
@@ -95,6 +95,7 @@ MqttTemperatureAccessory.prototype.setStatus = function(status, callback, contex
 	} 
 	callback();
 }
+*/
 
 MqttTemperatureAccessory.prototype.getServices = function() {
   return [this.service];
