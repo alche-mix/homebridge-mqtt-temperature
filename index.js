@@ -3,7 +3,7 @@
 // Remember to add accessory to config.json. Example:
 // "accessories": [
 //     {
-//            "accessory": "mqttswitch",
+//            "accessory": "mqtttemperature",
 //            "name": "PUT THE NAME OF YOUR SWITCH HERE",
 //            "url": "PUT URL OF THE BROKER HERE",
 //			  "username": "PUT USERNAME OF THE BROKER HERE",
@@ -25,10 +25,10 @@ var Service, Characteristic;
 var mqtt = require("mqtt");
 
 
-function MqttSwitchAccessory(log, config) {
+function MqttTemperatureAccessory(log, config) {
   	this.log          	= log;
-  	this.name 			= config["name"];
-  	this.url 			= config["url"];
+  	this.name 		= config["name"];
+  	this.url 		= config["url"];
 	this.client_Id 		= 'mqttjs_' + Math.random().toString(16).substr(2, 8);
 	this.options = {
 	    keepalive: 10,
@@ -54,9 +54,9 @@ function MqttSwitchAccessory(log, config) {
 
 	this.switchStatus = false;
 	
-	this.service = new Service.Switch(this.name);
+	this.service = new Service.TemperatureSensor(this.name);
   	this.service
-    	.getCharacteristic(Characteristic.On)
+    	.getCharacteristic(Characteristic.CurrentTemperature)
     	.on('get', this.getStatus.bind(this))
     	.on('set', this.setStatus.bind(this));
 	
@@ -81,14 +81,14 @@ module.exports = function(homebridge) {
   	Service = homebridge.hap.Service;
   	Characteristic = homebridge.hap.Characteristic;
   
-  	homebridge.registerAccessory("homebridge-mqttswitch", "mqttswitch", MqttSwitchAccessory);
+  	homebridge.registerAccessory("homebridge-mqtt-temperature", "mqtttemperature", MqttTemperatureAccessory);
 }
 
-MqttSwitchAccessory.prototype.getStatus = function(callback) {
+MqttTemperatureAccessory.prototype.getStatus = function(callback) {
     callback(null, this.switchStatus);
 }
 
-MqttSwitchAccessory.prototype.setStatus = function(status, callback, context) {
+MqttTemperatureAccessory.prototype.setStatus = function(status, callback, context) {
 	if(context !== 'fromSetValue') {
 		this.switchStatus = status;
 	    this.client.publish(this.topicStatusSet, status ? "true" : "false");
@@ -96,6 +96,6 @@ MqttSwitchAccessory.prototype.setStatus = function(status, callback, context) {
 	callback();
 }
 
-MqttSwitchAccessory.prototype.getServices = function() {
+MqttTemperatureAccessory.prototype.getServices = function() {
   return [this.service];
 }
