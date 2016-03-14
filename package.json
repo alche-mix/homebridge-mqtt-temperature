@@ -1,7 +1,7 @@
 {
-  "name": "homebridge-mqttswitch",
+  "name": "homebridge-mqtt-temperature",
   "version": "0.0.2",
-  "description": "Homebridge plugin for MQTT switches",
+  "description": "Homebridge plugin for MQTT temperature sensors",
   "note": "peerDependencies is hardcoded to peerDepdendencies in homebridge!!!",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ilcato/homebridge-mqttswitch"
+    "url": "https://github.com/tvillingett/homebridge-mqtt-temperature" 
   },
   "keywords": [
     "homebridge-plugin",
@@ -27,10 +27,10 @@
   "dependencies": {
     "mqtt": "^1.6.3"
   },
-  "author": "ilcato",
+  "author": "tvillingett",
   "license": "GPL2",
   "bugs": {
-    "url": "https://github.com/ilcato/homebridge-mqttswitch/issues"
+    "url": "https://github.com/tvillingett/homebridge-mqtt-temperature/issues"
   },
-  "homepage": "https://github.com/ilcato/homebridge-mqttswitch"
+  "homepage": "https://github.com/tvillingett/homebridge-mqtt-temperature"
 }
