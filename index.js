@@ -50,10 +50,11 @@ function MqttTemperatureAccessory(log, config) {
 	};
 	this.caption		= config["caption"];
 	this.topicStatusGet	= config["topics"].statusGet;
-	this.topicStatusSet	= config["topics"].statusSet;
+//	this.topicStatusSet	= config["topics"].statusSet;
 
-	this.currentTemperature = -50.0; // default
-	
+	this.CurrentTemperature = -50.0;
+//	this.TargetTemperature = -50.0;
+    
 	this.service = new Service.TemperatureSensor(this.name);
   	this.service
     	.getCharacteristic(Characteristic.CurrentTemperature)
@@ -69,9 +70,10 @@ function MqttTemperatureAccessory(log, config) {
 
 	this.client.on('message', function (topic, message) {
 		if (topic == that.topicStatusGet) {
-			var status = message.toString();
-			that.switchStatus = status;
-		   	that.service.getCharacteristic(Characteristic.CurrentTemperature).setValue(that.switchStatus, undefined, 'fromSetValue');
+			var status = parseFloat(message);
+			that.CurrentTemperature = status;
+		   	that.service.getCharacteristic(Characteristic.CurrentTemperature).setValue(status, undefined, 'fromSetValue');
+            //MqttTemperatureAccessory.setCharacteristic(Characteristic.CurrentTemperature, this.CurrentTemperature);
 		}
 	});
     this.client.subscribe(this.topicStatusGet);
@@ -85,12 +87,13 @@ module.exports = function(homebridge) {
 }
 
 MqttTemperatureAccessory.prototype.getStatus = function(callback) {
-    callback(null, this.switchStatus);
+    callback(null, this.CurrentTemperature);
 }
+
 /*
 MqttTemperatureAccessory.prototype.setStatus = function(status, callback, context) {
 	if(context !== 'fromSetValue') {
-		this.switchStatus = status;
+		this.CurrentTemperature = status;
 	    this.client.publish(this.topicStatusSet, status ? "true" : "false");
 	} 
 	callback();
