@@ -52,12 +52,13 @@ function MqttTemperatureAccessory(log, config) {
 	this.topicStatusGet	= config["topics"].statusGet;
 //	this.topicStatusSet	= config["topics"].statusSet;
 
-	this.CurrentTemperature = -50.0;
+	this.CurrentTemperature = -56.0;
 //	this.TargetTemperature = -50.0;
     
 	this.service = new Service.TemperatureSensor(this.name);
   	this.service
     	.getCharacteristic(Characteristic.CurrentTemperature)
+        .setProps({ minValue: -55, maxValue: 125 })
     	.on('get', this.getStatus.bind(this))
     	//.on('set', this.setStatus.bind(this));
 	
